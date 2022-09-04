@@ -25,7 +25,7 @@ class _SigninPageState extends State<SigninPage> {
   String selected_radio="";
 
   Future register()async{
-    // print("CHCK %% Radio >> ${selected_radio}"); // DEV NOTE
+
 
     if(password.text.isNotEmpty && user_id.text.isNotEmpty && user_email_id.text.isNotEmpty && conf_password.text.isNotEmpty){
       if(password.text == conf_password.text) {
@@ -36,7 +36,7 @@ class _SigninPageState extends State<SigninPage> {
           'user_email': user_email_id.text,
           'password': password.text,
           'user_type': selected_radio,
-          // NO TYPE | Radio Remaining
+       
         });
         var data = json.decode(response.body);
         if (data == 'Error') {
