@@ -1,8 +1,14 @@
 import 'package:attendancesystem/homepage.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'Dashboard.dart';
+import 'login.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  var username = preferences.getString('username');
+  runApp(MaterialApp(home: username == null ? HomePage(): Dashboard(),));
 }
 
 class MyApp extends StatelessWidget {

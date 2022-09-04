@@ -15,7 +15,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ruia Attendance System'),
+        title: const Text('Tell Us Who You Are?'),
       ),
       body: Center(
           child: SafeArea(

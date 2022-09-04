@@ -3,13 +3,16 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
-import 'package:attendancesystem/otpform.dart';
+// import 'package:attendancesystem/otpform.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:attendancesystem/Dashboard.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 enum UserRole { faculty, student }
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -35,6 +38,11 @@ class _LoginPageState extends State<LoginPage> {
       });
       var data = json.decode(response.body);
       if(data == 'DoneLogIn'){
+        SharedPreferences preferences = await SharedPreferences.getInstance();
+        preferences.setString('username', user.text);
+
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>Dashboard(),),); // Nav to Dashboard
+
         Fluttertoast.showToast(
             msg: "Authenticated as $selected_radio",  // Interpolations
             toastLength: Toast.LENGTH_SHORT,
@@ -135,10 +143,6 @@ class _LoginPageState extends State<LoginPage> {
                         MaterialStateProperty.all<Color>(Colors.black)),
                     onPressed: () {
                       login();
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => const OtpForm()),
-                      // );
                     },
                     child: const Text('Login'))
               ],
