@@ -7,7 +7,7 @@ import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 
 
-enum UserRole { Faculty, Student }
+enum UserRole { faculty, student }
 
 class SigninPage extends StatefulWidget {
   const SigninPage({super.key});
@@ -22,8 +22,11 @@ class _SigninPageState extends State<SigninPage> {
   TextEditingController user_email_id = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController conf_password = TextEditingController();
+  String selected_radio="";
 
   Future register()async{
+    // print("CHCK %% Radio >> ${selected_radio}"); // DEV NOTE
+
     if(password.text.isNotEmpty && user_id.text.isNotEmpty && user_email_id.text.isNotEmpty && conf_password.text.isNotEmpty){
       if(password.text == conf_password.text) {
         var url = "https://gopunchin.000webhostapp.com/RegisterUser.php";
@@ -32,7 +35,7 @@ class _SigninPageState extends State<SigninPage> {
           'user_id': user_id.text,
           'user_email': user_email_id.text,
           'password': password.text,
-          'user_type': " ",
+          'user_type': selected_radio,
           // NO TYPE | Radio Remaining
         });
         var data = json.decode(response.body);
@@ -84,7 +87,7 @@ class _SigninPageState extends State<SigninPage> {
 
 
 
-  UserRole? _role = UserRole.Faculty;
+  UserRole? _role = UserRole.faculty;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -136,30 +139,32 @@ class _SigninPageState extends State<SigninPage> {
                   border: UnderlineInputBorder(),
                   labelText: 'confirm password:'),
             ),
-            // ListTile(
-            //   title: const Text('Faculty'),
-            //   leading: Radio<UserRole>(
-            //     value: UserRole.Faculty,
-            //     groupValue: _role,
-            //     onChanged: (UserRole? value) {
-            //       setState(() {
-            //         _role = value;
-            //       });
-            //     },
-            //   ),
-            // ),
-            // ListTile(
-            //   title: const Text('Student'),
-            //   leading: Radio<UserRole>(
-            //     value: UserRole.Student,
-            //     groupValue: _role,
-            //     onChanged: (UserRole? value) {
-            //       setState(() {
-            //         _role = value;
-            //       });
-            //     },
-            //   ),
-            // ),
+            ListTile(
+              title: const Text('Faculty'),
+              leading: Radio<UserRole>(
+                value: UserRole.faculty,
+                groupValue: _role,
+                onChanged: (UserRole? value) {
+                  setState(() {
+                    _role = value;
+                    selected_radio = value.toString().split('.').last;
+                  });
+                },
+              ),
+            ),
+            ListTile(
+              title: const Text('Student'),
+              leading: Radio<UserRole>(
+                value: UserRole.student,
+                groupValue: _role,
+                onChanged: (UserRole? value) {
+                  setState(() {
+                    _role = value;
+                    selected_radio = value.toString().split('.').last;
+                  });
+                },
+              ),
+            ),
             ElevatedButton(
                 style: ButtonStyle(
                     foregroundColor:
