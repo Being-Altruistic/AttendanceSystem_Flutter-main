@@ -39,7 +39,8 @@ class _LoginPageState extends State<LoginPage> {
       var data = json.decode(response.body);
       if(data == 'DoneLogIn'){
         SharedPreferences preferences = await SharedPreferences.getInstance();
-        preferences.setString('username', user.text);
+        preferences.setString('username', user.text);       // For Session Management
+        preferences.setString('user_type',selected_radio);  // For Session Management
 
         Navigator.push(context, MaterialPageRoute(builder: (context)=>Dashboard(),),); // Nav to Dashboard
 
@@ -54,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
         );
       }else{
         Fluttertoast.showToast(
-            msg: "Not Auth | Pls Check Creds & Ur Role",
+            msg: "Pls Check Creds & Ur Role",
             toastLength: Toast.LENGTH_SHORT,
             gravity:ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
