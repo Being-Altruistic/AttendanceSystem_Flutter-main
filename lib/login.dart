@@ -10,6 +10,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:attendancesystem/Dashboard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'generateotp.dart';
+
 
 enum UserRole { faculty, student }
 
@@ -24,7 +26,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController user = TextEditingController();
   TextEditingController pass = TextEditingController();
-  String selected_radio = "";
+  String selected_radio = "faculty";
 
 
   Future login()async{
@@ -36,24 +38,39 @@ class _LoginPageState extends State<LoginPage> {
       {
         'username': user.text, 'password' : pass.text, 'user_type': selected_radio,
       });
-      var data = json.decode(response.body);
-      if(data == 'DoneLogIn'){
-        SharedPreferences preferences = await SharedPreferences.getInstance();
-        preferences.setString('username', user.text);       // For Session Management
-        preferences.setString('user_type',selected_radio);  // For Session Management
 
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>Dashboard(),),); // Nav to Dashboard
+      // Try Catch to Catch Exceptions
 
-        Fluttertoast.showToast(
-            msg: "Authenticated as $selected_radio",  // Interpolations
-            toastLength: Toast.LENGTH_SHORT,
-            gravity:ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-            fontSize: 16.0
-        );
-      }else{
+      try {
+        var data = json.decode(response.body);
+
+        if (data[0]['user_name'] != null) {
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+          preferences.setString('user_name', data[0]['user_name'].toString()); // For Session Management
+          preferences.setString('user_id', user.text); // For Session Management
+          preferences.setString('user_type', selected_radio); // For Session Management
+
+          // Different Routes for separate roles.
+
+          if (selected_radio == 'student') {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(),),); // Nav to Dashboard
+          }
+          else if (selected_radio == 'faculty') {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => OtpGenerator(),),); // Nav to Dashboard
+          }
+          Fluttertoast.showToast(
+              msg: "Authenticated as $selected_radio",
+              // Interpolations
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              fontSize: 16.0
+          );
+        }
+      }
+      catch(e){
         Fluttertoast.showToast(
             msg: "Pls Check Creds & Ur Role",
             toastLength: Toast.LENGTH_SHORT,

@@ -7,7 +7,7 @@ import 'login.dart';
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences preferences = await SharedPreferences.getInstance();
-  var username = preferences.getString('username');
+  var username = preferences.getString('user_name');
   runApp(MaterialApp(home: username == null ? HomePage(): Dashboard(),));
 }
 

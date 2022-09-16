@@ -22,21 +22,23 @@ class _SigninPageState extends State<SigninPage> {
   TextEditingController user_email_id = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController conf_password = TextEditingController();
-  String selected_radio="";
+  TextEditingController user_name = TextEditingController();
+  String selected_radio="faculty";
 
   Future register()async{
 
 
-    if(password.text.isNotEmpty && user_id.text.isNotEmpty && user_email_id.text.isNotEmpty && conf_password.text.isNotEmpty){
+    if(password.text.isNotEmpty && user_id.text.isNotEmpty && user_name.text.isNotEmpty && user_email_id.text.isNotEmpty && conf_password.text.isNotEmpty){
       if(password.text == conf_password.text) {
         var url = "https://gopunchin.000webhostapp.com/RegisterUser.php";
         var response = await http.post(Uri.parse(url), body:
         {
           'user_id': user_id.text,
+          'user_name': user_name.text,
           'user_email': user_email_id.text,
           'password': password.text,
           'user_type': selected_radio,
-       
+
         });
         var data = json.decode(response.body);
         if (data == 'Error') {
@@ -108,6 +110,14 @@ class _SigninPageState extends State<SigninPage> {
               decoration: const InputDecoration(
                   border: UnderlineInputBorder(),
                   labelText: 'Enter your user ID:'),
+            ),
+            TextFormField(
+              controller: user_name,
+              style: const TextStyle(fontSize: 15.0),
+              keyboardType: TextInputType.name,
+              decoration: const InputDecoration(
+                  border: UnderlineInputBorder(),
+                  labelText: 'Enter your NAME :'),
             ),
             TextFormField(
               controller: user_email_id,

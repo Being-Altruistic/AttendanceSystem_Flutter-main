@@ -24,13 +24,15 @@ class Dashboard extends StatefulWidget {
 
 // Dashboard for Classroom Lists Nav Page
 class _DashboardState extends State<Dashboard> {
-  static String username = "";
+  static String user_name_saved_session_value = "";    // To access the stored user name session value to display in on DRAWER welcome message.
+  static String user_id_saved_session_value = "";      // To access the stored user ID session value to retrieve that user's respective classrooms
+
 
   // Session Management
   Future getUsername()async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
-      username = preferences.getString('username')!;
+      user_name_saved_session_value = preferences.getString('user_name')!;
     });
   }
 
@@ -43,12 +45,12 @@ class _DashboardState extends State<Dashboard> {
     // Getting the user_session value
 
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    username = preferences.getString('username')!;
+    user_id_saved_session_value = preferences.getString('user_id')!;
 
     var url = "https://gopunchin.000webhostapp.com/get_classrooms_student.php";
     var response = await http.post(Uri.parse(url), body:
     {
-      'user_id': username
+      'user_id': user_id_saved_session_value
     });
     if(response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -63,7 +65,9 @@ class _DashboardState extends State<Dashboard> {
   // LogOut Logic
   Future logOut(BuildContext context)async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.remove('username');
+    preferences.remove('user_name');
+
+
     Fluttertoast.showToast(
         msg: "LogOut Successful",
         toastLength: Toast.LENGTH_SHORT,
@@ -111,7 +115,7 @@ class _DashboardState extends State<Dashboard> {
              DrawerHeader(decoration: BoxDecoration(
               color: Colors.cyan,
             ),
-              child: Text('Hello, $username',style:TextStyle(fontSize: 30),),
+              child: Text('Hello, $user_name_saved_session_value',style:TextStyle(fontSize: 20),),
             ),
             ListTile(
               title:  const Text('Log Out',style:TextStyle(color: Colors.red,fontSize: 25),),
