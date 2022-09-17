@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:otp/otp.dart';
 import 'package:http/http.dart' as http;
+import 'package:attendancesystem/facultyDashboard.dart';
 
 class OtpGenerator extends StatefulWidget {
-  const OtpGenerator({super.key});
+  //Getting the NAME OF CLASSROOM from previous screen i.e. DASHBOARD, for which the OTP needs to be entered.
+  final String value;
+
+  const OtpGenerator({
+    Key? key,
+    required this.value,
+  }) : super(key: key);
 
   @override
   State<OtpGenerator> createState() => _OtpGeneratorState();
@@ -30,7 +37,7 @@ class _OtpGeneratorState extends State<OtpGenerator> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Generate OTP"),
+        title: Text("Generate OTP for ${widget.value}"),
       ),
       body: SafeArea(
         child: Column(
