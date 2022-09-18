@@ -21,7 +21,7 @@ class _CreateClassFacultyState extends State<CreateClassFaculty> {
   TextEditingController subject_name = TextEditingController();
   TextEditingController subject_code = TextEditingController();
 
-  String class_code = "";
+  static String class_code = "";
   generateRandomString() {
     setState(() {
       int length = 6;
@@ -49,6 +49,13 @@ class _CreateClassFacultyState extends State<CreateClassFaculty> {
       user_id_saved_session_value = preferences_id.getString('user_id')!;
     });
   }
+
+  // Future getClassCode() async {
+  //   SharedPreferences preferences_code = await SharedPreferences.getInstance();
+  //   setState(() {
+  //     class_code = preferences_code.getString('class_code')!;
+  //   });
+  // }
 
   Future createClass() async {
     SharedPreferences preferences_name = await SharedPreferences.getInstance();
@@ -161,5 +168,6 @@ class _CreateClassFacultyState extends State<CreateClassFaculty> {
     super.initState();
     getUserName();
     getUserId();
+    // getClassCode();
   }
 }
