@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 
-
 enum UserRole { faculty, student }
 
 class SigninPage extends StatefulWidget {
@@ -17,28 +16,27 @@ class SigninPage extends StatefulWidget {
 }
 
 class _SigninPageState extends State<SigninPage> {
-
   TextEditingController user_id = TextEditingController();
   TextEditingController user_email_id = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController conf_password = TextEditingController();
   TextEditingController user_name = TextEditingController();
-  String selected_radio="faculty";
+  String selected_radio = "faculty";
 
-  Future register()async{
-
-
-    if(password.text.isNotEmpty && user_id.text.isNotEmpty && user_name.text.isNotEmpty && user_email_id.text.isNotEmpty && conf_password.text.isNotEmpty){
-      if(password.text == conf_password.text) {
+  Future register() async {
+    if (password.text.isNotEmpty &&
+        user_id.text.isNotEmpty &&
+        user_name.text.isNotEmpty &&
+        user_email_id.text.isNotEmpty &&
+        conf_password.text.isNotEmpty) {
+      if (password.text == conf_password.text) {
         var url = "https://gopunchin.000webhostapp.com/RegisterUser.php";
-        var response = await http.post(Uri.parse(url), body:
-        {
+        var response = await http.post(Uri.parse(url), body: {
           'user_id': user_id.text,
           'user_name': user_name.text,
           'user_email': user_email_id.text,
           'password': password.text,
           'user_type': selected_radio,
-
         });
         var data = json.decode(response.body);
         if (data == 'Error') {
@@ -49,8 +47,7 @@ class _SigninPageState extends State<SigninPage> {
               timeInSecForIosWeb: 1,
               backgroundColor: Colors.red,
               textColor: Colors.white,
-              fontSize: 16.0
-          );
+              fontSize: 16.0);
         } else {
           Fluttertoast.showToast(
               msg: "Registration Done | Pls Login",
@@ -59,35 +56,29 @@ class _SigninPageState extends State<SigninPage> {
               timeInSecForIosWeb: 1,
               backgroundColor: Colors.green,
               textColor: Colors.white,
-              fontSize: 16.0
-          );
+              fontSize: 16.0);
         }
-      }else{
+      } else {
         Fluttertoast.showToast(
             msg: "Confirm Password Didn't Match!",
             toastLength: Toast.LENGTH_SHORT,
-            gravity:ToastGravity.CENTER,
+            gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
             backgroundColor: Colors.red,
             textColor: Colors.white,
-            fontSize: 16.0
-        );
+            fontSize: 16.0);
       }
-    }else{
+    } else {
       Fluttertoast.showToast(
           msg: "Pls Fill All Required Fields!",
           toastLength: Toast.LENGTH_SHORT,
-          gravity:ToastGravity.CENTER,
+          gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
           backgroundColor: Colors.red,
           textColor: Colors.white,
-          fontSize: 16.0
-      );
+          fontSize: 16.0);
     }
   }
-
-
-
 
   UserRole? _role = UserRole.faculty;
   @override
