@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otp/otp.dart';
 import 'package:http/http.dart' as http;
 import 'package:attendancesystem/facultyDashboard.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpGenerator extends StatefulWidget {
   //Getting the NAME OF CLASSROOM from previous screen i.e. DASHBOARD, for which the OTP needs to be entered.
@@ -27,6 +28,13 @@ class _OtpGeneratorState extends State<OtpGenerator> {
       textHolder = code;
     });
   }
+
+  // Future getClassCode() async {
+  //   SharedPreferences preferences = await SharedPreferences.getInstance();
+  //   setState(() {
+  //     class_code = preferences.getString('class_code')!;
+  //   });
+  // }
 
   Future submitOtp() async {
     var url = "https://gopunchin.000webhostapp.com/otp.php";
@@ -68,5 +76,10 @@ class _OtpGeneratorState extends State<OtpGenerator> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 }

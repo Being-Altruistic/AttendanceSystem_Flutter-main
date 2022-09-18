@@ -23,20 +23,21 @@ class _FacultyDashboardState extends State<FacultyDashboard> {
   static String user_id_saved_session_value =
       ""; // To access the stored user ID session value to retrieve that user's respective classrooms
 
-  // static String class_code = "";
-  // generateRandomString() {
-  //   setState(() {
-  //     int length = 6;
-  //     final random = Random();
-  //     const availableChars =
-  //         'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-  //     final randomString = List.generate(length,
-  //             (index) => availableChars[random.nextInt(availableChars.length)])
-  //         .join();
+  static String class_code = "";
 
-  //     class_code = randomString;
-  //   });
-  // }
+  generateRandomString() {
+    setState(() {
+      int length = 6;
+      final random = Random();
+      const availableChars =
+          'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+      final randomString = List.generate(length,
+              (index) => availableChars[random.nextInt(availableChars.length)])
+          .join();
+
+      class_code = randomString;
+    });
+  }
 
   // @override
   // void dispose() {
@@ -164,6 +165,7 @@ class _FacultyDashboardState extends State<FacultyDashboard> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
+            generateRandomString;
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -196,5 +198,6 @@ class _FacultyDashboardState extends State<FacultyDashboard> {
   void initState() {
     super.initState();
     getUsername();
+    // getClassCode();
   }
 }

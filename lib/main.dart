@@ -4,11 +4,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'Dashboard.dart';
 import 'login.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences preferences = await SharedPreferences.getInstance();
   var username = preferences.getString('user_name');
-  runApp(MaterialApp(home: username == null ? HomePage(): Dashboard(),));
+  runApp(MaterialApp(
+    home: username == null ? HomePage() : LoginPage(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
