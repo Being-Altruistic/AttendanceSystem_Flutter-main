@@ -79,7 +79,7 @@ class _OtpGeneratorState extends State<OtpGenerator> with SingleTickerProviderSt
       var response = await http.post(Uri.parse(url), body: {
         'f_id': preferences.getString('user_id')!,
         'f_name': preferences.getString('user_name')!,
-        'f_course': widget.value.toString(),
+        'f_course': widget.value.toString(),      // Course Code
         'lec_start': DateTime.now().toString(),             /**FOR Database col type DATETIME, convert to string & compare in DB **/
         'otp': textHolder,
         'otp_expiry': DateTime.now().add(Duration(minutes: otp_exp_time)).toString()

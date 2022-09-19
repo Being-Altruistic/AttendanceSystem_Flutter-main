@@ -32,6 +32,7 @@ class _DashboardState extends State<Dashboard> {
   String f_name ="";
   String f_course ="";
   String u_email ="";
+  String f_course_code ="";
 
 
   @override
@@ -110,15 +111,16 @@ class _DashboardState extends State<Dashboard> {
       var url1 = "https://gopunchin.000webhostapp.com/retrieveClassDetails.php";
       var response1 = await http.post(Uri.parse(url1), body:
       {
-        'code': class_CODE_GLOBAL.toString()
+        'class_code': class_CODE_GLOBAL.toString()
       });
 
       /** Fetched faculty name & Launched Course from CLASS_CODES tables if class code is  valid **/
 
       if(response1.statusCode == 200) {
         final retrieved_by_code = json.decode(response1.body);
-        f_name = retrieved_by_code[0]['faculty_name'];
-        f_course = retrieved_by_code[0]['subject'];
+        f_name = retrieved_by_code[0]['user_name'];
+        f_course = retrieved_by_code[0]['subject_name'];
+        f_course_code = retrieved_by_code[0]['subject_code'];
       }else
       {
         throw Exception('Failed to load post');
@@ -134,6 +136,7 @@ class _DashboardState extends State<Dashboard> {
         'user_name': u_name,
         'user_email_id': u_email,
         'classrooms': f_course,
+        'course_code': f_course_code,
         'faculty_name': f_name
       });
 
@@ -192,7 +195,7 @@ class _DashboardState extends State<Dashboard> {
         textColor: Colors.white,
         fontSize: 16.0
     );
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage(),),); // Navigation back to HomePage
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage(),),); // Navigation back to HomePage()
   }
 
   // Base Widget
@@ -237,7 +240,7 @@ class _DashboardState extends State<Dashboard> {
               Navigator.of(context).push(MaterialPageRoute(
 
                 // Passing CLASSROOM NAME to the OtpForm.dart file.
-                  builder: (context) => OtpForm(value: my_class.classroom.toString()),
+                  builder: (context) => OtpForm(value: my_class.course_code.toString()),
               ));
             },
           ),

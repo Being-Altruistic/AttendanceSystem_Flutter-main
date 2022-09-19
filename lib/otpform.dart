@@ -23,7 +23,7 @@ class _OtpFormState extends State<OtpForm> {
   TextEditingController variable = TextEditingController();
   String user_id_saved_session_value = "";
   String user_name_saved_session_value = "";
-  String curr_time =  DateTime.now().toString();
+  String curr_time =  '';
 
 
 
@@ -39,7 +39,7 @@ class _OtpFormState extends State<OtpForm> {
       'student_name':user_name_saved_session_value,
       'student_punch_timestamp':curr_time,
       'status':"WAIT",
-      'f_course': curr_classroom
+      'f_course': curr_classroom      // Course Code
     });
 
     // var data = json.decode(response.body);
@@ -49,20 +49,28 @@ class _OtpFormState extends State<OtpForm> {
 
   Future verifyOtp() async {
 
-    final String curr_classroom = widget.value;
+    curr_time =  DateTime.now().toString();
+    String curr_classroom = widget.value;
+
     SharedPreferences preferences = await SharedPreferences.getInstance();
     user_id_saved_session_value = preferences.getString('user_id')!;
     user_name_saved_session_value = preferences.getString('user_name')!;
 
 
-    try {
+    // try {
       var url = "https://gopunchin.000webhostapp.com/otpVerification.php";
       var response = await http.post(Uri.parse(url), body: {
-        'curr_time': curr_time
+        'curr_time': curr_time,
+        'course_code':curr_classroom
       });
+      print("CURR TIME ::>> ${curr_time}");
+      print("CURR class ::>> ${curr_classroom}");
+
       var data = json.decode(response.body);
 
-      if (data[0]['otp'] == variable.text && data[0]['f_course'] == curr_classroom) {
+    print("OTP::>> ${data[0]['otp']}");
+
+      if (data[0]['otp'] == variable.text) {
         Fluttertoast.showToast(
             msg: "OTP is Valid",
             toastLength: Toast.LENGTH_SHORT,
@@ -84,16 +92,16 @@ class _OtpFormState extends State<OtpForm> {
             textColor: Colors.white,
             fontSize: 16.0);
       }
-    }catch(e){
-      Fluttertoast.showToast(
-          msg: "InValid",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    }
+    // }catch(e){
+    //   Fluttertoast.showToast(
+    //       msg: "InValid",
+    //       toastLength: Toast.LENGTH_SHORT,
+    //       gravity: ToastGravity.CENTER,
+    //       timeInSecForIosWeb: 1,
+    //       backgroundColor: Colors.red,
+    //       textColor: Colors.white,
+    //       fontSize: 16.0);
+    // }
   }
 
   @override
