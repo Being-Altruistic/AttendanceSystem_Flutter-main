@@ -10,6 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:attendancesystem/Dashboard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'facultyDashboard.dart';
 import 'generateotp.dart';
 
 
@@ -56,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
             Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(),),); // Nav to Dashboard
           }
           else if (selected_radio == 'faculty') {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => OtpGenerator(),),); // Nav to Dashboard
+            Navigator.push(context, MaterialPageRoute(builder: (context) => FacultyDashboard(),),); // Nav to Dashboard
           }
           Fluttertoast.showToast(
               msg: "Authenticated as $selected_radio",

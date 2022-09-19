@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpForm extends StatefulWidget {
 
@@ -12,7 +13,7 @@ class OtpForm extends StatefulWidget {
   const OtpForm({
     Key? key,
     required this.value,
-}) : super(key: key);
+  }) : super(key: key);
 
   @override
   State<OtpForm> createState() => _OtpFormState();
@@ -20,27 +21,76 @@ class OtpForm extends StatefulWidget {
 
 class _OtpFormState extends State<OtpForm> {
   TextEditingController variable = TextEditingController();
+  String user_id_saved_session_value = "";
+  String user_name_saved_session_value = "";
+  String curr_time =  DateTime.now().toString();
+
+
+
+  Future pushStudentData() async {
+    final String curr_classroom = widget.value;
+
+    /** ENTERING VALID STUDENT DATA **/
+    var url = "https://gopunchin.000webhostapp.com/push_studentdata_valid_otp.php";
+
+    // var response = await http.post(Uri.parse(url), body: {'verifyOTP': variable.text});
+    var response = await http.post(Uri.parse(url), body: {
+      'student_id':user_id_saved_session_value,
+      'student_name':user_name_saved_session_value,
+      'student_punch_timestamp':curr_time,
+      'status':"WAIT",
+      'f_course': curr_classroom
+    });
+
+    // var data = json.decode(response.body);
+
+  }
+
 
   Future verifyOtp() async {
-    var url = "https://gopunchin.000webhostapp.com/otpVerification.php";
-    var response = await http.post(Uri.parse(url), body: {'verifyOTP': variable.text});
-    var data = json.decode(response.body);
-    if (data == "Error") {
+
+    final String curr_classroom = widget.value;
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    user_id_saved_session_value = preferences.getString('user_id')!;
+    user_name_saved_session_value = preferences.getString('user_name')!;
+
+
+    try {
+      var url = "https://gopunchin.000webhostapp.com/otpVerification.php";
+      var response = await http.post(Uri.parse(url), body: {
+        'curr_time': curr_time
+      });
+      var data = json.decode(response.body);
+
+      if (data[0]['otp'] == variable.text && data[0]['f_course'] == curr_classroom) {
+        Fluttertoast.showToast(
+            msg: "OTP is Valid",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+
+        pushStudentData();
+
+      } else {
+        Fluttertoast.showToast(
+            msg: "InValid",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    }catch(e){
       Fluttertoast.showToast(
-          msg: "Not Valid",
+          msg: "InValid",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
           backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    } else {
-      Fluttertoast.showToast(
-          msg: "Valid",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.green,
           textColor: Colors.white,
           fontSize: 16.0);
     }
