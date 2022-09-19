@@ -94,12 +94,11 @@ class _OtpFormState extends State<OtpForm> {
                       MaterialStateProperty.all<Color>(Colors.greenAccent)),
               onPressed: () {
                 verifyOtp();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FeedbackForm(),
-                  ),
-                );
+
+                Navigator.of(context).push(MaterialPageRoute(
+                  // Passing CLASSROOM NAME to the OtpForm.dart file.
+                  builder: (context) => FeedbackForm(value: widget.value),
+                ));
               },
               child: Text('PunchIn', style: TextStyle(fontSize: 25)))
         ],
