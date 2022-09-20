@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
 
@@ -29,30 +30,93 @@ class _OtpGeneratorState extends State<OtpGenerator> with SingleTickerProviderSt
   String fname = '';
   String fid = '';
   String fcourse = '';
-  int otp_exp_time = 15;
+
+  // int otp_exp_time = 2; // Timmer Limit
+
+  static const maxSeconds = 59;
+  int seconds = maxSeconds;
+
+
+  // Here, this represents when will OTP expire
+  int minutes = 5;  // Display 2 for 3 min timer | 1 decr
+
+
+  // Import dart.async Library
+  Timer? timer;
+
+  // FOR DropDown
+  List<String> sessions = ['Theory','Practicals'];
+  String? currSelectedItem = 'Theory';
 
   // To manage tabs based on certain activity with custom controller
+  // To declare variables that will be initialized later
+  // Enforce this variable’s constraints at runtime instead of at compile time
   late TabController tab_controller;
 
 
-  // Initializing the controller
+  /*** TIMER LOGIC , DISPLAY LIVE TIMER ***/
+
+  @override
+
+  void startTimer() async{
+    // Exec callback every seconds
+    timer = Timer.periodic(Duration(seconds: 1),
+            (_)       // Callback func which repeatedly calls seconds decrement
+        // Callback can be named anything, like (timer) (name) etc.
+        {
+          seconds--;
+          // Callback function visits this section every 1 sec
+          // the following conditions are checked.
+          if(seconds == 0 && minutes>0){
+            minutes--;    // If seconds = 0 , then decrement minutes by 1
+            seconds=maxSeconds; // reset seconds to 59 sec
+          }else if(minutes ==0 && seconds ==1){ // Trigger Stop at 1th second
+            minutes=0;
+            seconds=0;
+            /** Declared a callback function "(_)" above,
+                So using that function's object "_.cancel()" to cancel/stop
+                the callback being performed continuously every 1 sec.
+             **/
+            _.cancel();                     // Stopped at 0th second
+
+            // if(timer?.isActive == false){
+            //   /** LOGIC **/
+            // }
+
+            /** CallBack by (_) is now stopped **/
+          }
+
+          // Set the variables to stateful to update the realtime values.
+          setState(()=>{
+            seconds,
+            minutes
+          });
+
+        });
+  }
+
+
+
+
+  // Initializing the TAB controller
   @override
   void initState(){
     super.initState();
     tab_controller = TabController(length: 2, vsync: this);
     tab_controller.addListener(() {
-      setState(() {
-        if(tab_controller.index==1){
-          // Call functon
-        }
+      if(tab_controller.indexIsChanging && tab_controller.index==1){
+        setState(() {
 
-      });
+        });
+      }
+
     });
   }
 
   @override
   void dispose(){
     tab_controller.dispose();
+
     super.dispose();
   }
 
@@ -70,6 +134,59 @@ class _OtpGeneratorState extends State<OtpGenerator> with SingleTickerProviderSt
     });
   }
 
+
+  Future endSession() async{
+    var url = "https://gopunchin.000webhostapp.com/end_lec.php";
+
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+
+      var response = await http.post(Uri.parse(url), body: {
+        'f_id': preferences.getString('user_id')!,
+        'f_course': widget.value.toString(),
+        'today': DateTime
+            .now()
+            .day
+            .toString(),
+        'end': DateTime.now().toString()
+      });
+      var data = json.decode(response.body);
+
+      print("DATA ::>>${data}");
+
+      if (data == "updated") {
+        Fluttertoast.showToast(
+            msg: "SESSION ENDED",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else if (data == "error") {
+        Fluttertoast.showToast(
+            msg: "Some Error Occurred",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    }catch(e){
+      Fluttertoast.showToast(
+          msg: "NETWORK ERROR",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+
+  }
+
+
   Future submitOtp() async {
     var url = "https://gopunchin.000webhostapp.com/pushOtp_and_data.php";
 
@@ -79,10 +196,11 @@ class _OtpGeneratorState extends State<OtpGenerator> with SingleTickerProviderSt
       var response = await http.post(Uri.parse(url), body: {
         'f_id': preferences.getString('user_id')!,
         'f_name': preferences.getString('user_name')!,
-        'f_course': widget.value.toString(),      // Course Code
+        'f_course': widget.value.toString(),
+        'lec_type': currSelectedItem,
         'lec_start': DateTime.now().toString(),             /**FOR Database col type DATETIME, convert to string & compare in DB **/
         'otp': textHolder,
-        'otp_expiry': DateTime.now().add(Duration(minutes: otp_exp_time)).toString()
+        'otp_expiry': DateTime.now().add(Duration(minutes: minutes+1)).toString()
       });
 
       var data = json.decode(response.body);
@@ -120,25 +238,11 @@ class _OtpGeneratorState extends State<OtpGenerator> with SingleTickerProviderSt
   }
 
 
-  Widget buildStudents(List<Students> users) => ListView.builder(
-      itemCount: users.length,
-      itemBuilder: (context,index) {
-        final user = users[index];
-        return Card(
-          child: ListTile(
-            title: Text(user.name),
-            subtitle: Text(user.id),
-
-          ),
-        );
-      }
-  );
-
   @override
   Widget build(BuildContext context) =>
       Scaffold(
         appBar: AppBar(
-          // title: Text('Manager'),
+          title: Text('${widget.value.toString()}'),
           centerTitle: true,
           bottom: TabBar(
 
@@ -158,6 +262,48 @@ class _OtpGeneratorState extends State<OtpGenerator> with SingleTickerProviderSt
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Text('$minutes:'+'$seconds', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black,
+                  fontSize: 80,
+                ),),
+
+                // Within SizedBox
+                SizedBox(
+                  width: 300,
+
+                  /** DropdownButton<String> :: FOr NON Decorative style **/
+
+                  child: DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    // Passing list to DRopDownButton  // Iterate ove passed list & pick each value
+
+                    // This is needed to display the current selected value onto the screen
+                    // Whenever the screen is created newly.
+
+                    value: currSelectedItem,
+                    items: sessions.map(
+                      // Map every item in the list to DropdownMenuItem object
+
+                            (item)=> DropdownMenuItem<String>(
+
+                          // Setting value for each item & displaying each element as TextWidget.
+                          value: item,
+                          child: Text(item,style: TextStyle(fontSize: 20),),)
+
+                      // Sp ultimate return result to above map is a List of DropdownMenuItem
+                    ).toList(),
+
+                    // The moment onCHANGE is detected, set currSelectedItem=item
+                    // use setState to
+                    // update the screen value.
+                    onChanged:
+                        (item)=> setState(() => currSelectedItem = item),
+                  ),
+                ),
+
                 Text(
                   textHolder,
                   textAlign: TextAlign.center,
@@ -171,8 +317,18 @@ class _OtpGeneratorState extends State<OtpGenerator> with SingleTickerProviderSt
                     onPressed: () {
                       generateOtp();
                       submitOtp();
+                      // startTimer(); // MAking CAll to Start Timer
                     },
-                    child: const Text('Generate OTP'))
+                    child: const Text('Generate OTP')),
+                ElevatedButton(
+                    style: ButtonStyle(
+                        alignment: Alignment.center,
+                        foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white),backgroundColor: MaterialStateProperty.all<Color>(Colors.redAccent)),
+                    onPressed: () {
+                      endSession();
+                    },
+                    child: const Text('END SESSION')),
               ],
             ),
             Center(child: Text("Could not LOAD DATA"),
@@ -181,3 +337,4 @@ class _OtpGeneratorState extends State<OtpGenerator> with SingleTickerProviderSt
         ),
       );
 }
+

@@ -97,7 +97,7 @@ class _FacultyDashboardState extends State<FacultyDashboard> {
 
   Future logOut(BuildContext context) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.remove('user_name');
+    preferences.remove('user_type');
 
     Fluttertoast.showToast(
         msg: "LogOut Successful",

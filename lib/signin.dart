@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'login.dart';
 
 enum UserRole { faculty, student }
 
@@ -61,6 +61,7 @@ class _SigninPageState extends State<SigninPage> {
               textColor: Colors.white,
               fontSize: 16.0
           );
+          Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage(),),); // Nav to Dashboard
         }
       }else{
         Fluttertoast.showToast(
@@ -178,7 +179,7 @@ class _SigninPageState extends State<SigninPage> {
             ElevatedButton(
                 style: ButtonStyle(
                     foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.black)),
+                    MaterialStateProperty.all<Color>(Colors.black)),
                 onPressed: () {
                   register();
                   // Navigator.push(

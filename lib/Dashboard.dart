@@ -63,6 +63,7 @@ class _DashboardState extends State<Dashboard> {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     user_id_saved_session_value = preferences.getString('user_id')!;
 
+
     var url = "https://gopunchin.000webhostapp.com/get_classrooms_student.php";
     var response = await http.post(Uri.parse(url), body:
     {
@@ -183,7 +184,7 @@ class _DashboardState extends State<Dashboard> {
   // LogOut Logic
   Future logOut(BuildContext context)async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.remove('user_name');
+    preferences.remove('user_type');
 
 
     Fluttertoast.showToast(
@@ -240,7 +241,7 @@ class _DashboardState extends State<Dashboard> {
               Navigator.of(context).push(MaterialPageRoute(
 
                 // Passing CLASSROOM NAME to the OtpForm.dart file.
-                  builder: (context) => OtpForm(value: my_class.course_code.toString()),
+                builder: (context) => OtpForm(value: my_class.course_code.toString()),
               ));
             },
           ),
@@ -254,7 +255,7 @@ class _DashboardState extends State<Dashboard> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-             DrawerHeader(decoration: BoxDecoration(
+            DrawerHeader(decoration: BoxDecoration(
               color: Colors.cyan,
             ),
               child: Text('Hello, $user_name_saved_session_value',style:TextStyle(fontSize: 20),),
@@ -288,12 +289,12 @@ class _DashboardState extends State<Dashboard> {
       // FOR JOIN CLASS FUNCTION
 
       floatingActionButton: FloatingActionButton(
-              child: Icon(Icons.add,size: 45,color: Colors.white,),
+        child: Icon(Icons.add,size: 45,color: Colors.white,),
 
-          /** A value will be returned & getting into final var **/
-          /** async & await for using FUTURE functions since event happen async**/
+        /** A value will be returned & getting into final var **/
+        /** async & await for using FUTURE functions since event happen async**/
 
-          onPressed: () async {
+        onPressed: () async {
           final classCODE = await joinClass();
           if (classCODE == null || classCODE.isEmpty) return;
 
@@ -302,21 +303,21 @@ class _DashboardState extends State<Dashboard> {
           class_CODE_GLOBAL = classCODE;
           joinClassFunc(class_CODE_GLOBAL);
 
-          },
-          ),
-          // backgroundColor: Colors.cyan,
+        },
+      ),
+      // backgroundColor: Colors.cyan,
 
     );
   }
 
   // First Call Goes to this via super.initState()
-    @override
-    void initState(){
-      super.initState();
-      getUsername();
+  @override
+  void initState(){
+    super.initState();
+    getUsername();
 
-      // Initializing the controller
-      controller = TextEditingController();
+    // Initializing the controller
+    controller = TextEditingController();
 
-    }
   }
+}

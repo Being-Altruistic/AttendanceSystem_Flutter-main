@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'dart:math';
 
+import 'facultyDashboard.dart';
 import 'package:attendancesystem/facultyDashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -90,6 +91,8 @@ class _CreateClassFacultyState extends State<CreateClassFaculty> {
             backgroundColor: Colors.green,
             textColor: Colors.white,
             fontSize: 16.0);
+
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>FacultyDashboard(),),);
       }
     } else {
       Fluttertoast.showToast(
